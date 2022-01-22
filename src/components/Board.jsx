@@ -12,13 +12,13 @@ export default function Board() {
 
     const newCard = { id: Date.now(), text: e.target.children[0].value };
 
-    if (e.target.parentNode.id === 'To-do') {
+    if (e.target.closest('ul').id === 'To-do') {
       setTodoList([...todoList, newCard]);
     }
-    if (e.target.parentNode.id === 'In Progress') {
+    if (e.target.closest('ul').id === 'In Progress') {
       setProgressList([...progressList, newCard]);
     }
-    if (e.target.parentNode.id === 'Done') {
+    if (e.target.closest('ul').id === 'Done') {
       setDoneList([...doneList, newCard]);
     }
 
@@ -47,19 +47,17 @@ export default function Board() {
 
   const dropItem = (e) => {
     e.preventDefault();
-    if (e.target.tagName === 'UL') {
-      if (e.target.id === 'To-do') {
-        removeItem();
-        setTodoList([...todoList, dragged]);
-      }
-      if (e.target.id === 'In Progress') {
-        removeItem();
-        setProgressList([...progressList, dragged]);
-      }
-      if (e.target.id === 'Done') {
-        removeItem();
-        setDoneList([...doneList, dragged]);
-      }
+    if (e.target.closest('ul').id === 'To-do') {
+      removeItem();
+      setTodoList([...todoList, dragged]);
+    }
+    if (e.target.closest('ul').id === 'In Progress') {
+      removeItem();
+      setProgressList([...progressList, dragged]);
+    }
+    if (e.target.closest('ul').id === 'Done') {
+      removeItem();
+      setDoneList([...doneList, dragged]);
     }
   };
 
