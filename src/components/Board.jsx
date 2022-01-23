@@ -6,58 +6,84 @@ export default function Board() {
   const [progressList, setProgressList] = useState([]);
   const [doneList, setDoneList] = useState([]);
   const [dragged, setDragged] = useState(null);
+  const columns = [
+    { label: 'To-do', list: todoList },
+    { label: 'In Progress', list: progressList },
+    { label: 'Done', list: doneList },
+  ];
+  // const [columns, setColumns] = useState([
+  // { label: 'To-do', list: todoList },
+  // { label: 'In Progress', list: progressList },
+  // { label: 'Done', list: doneList },
+  //   // { label: '', list: [] },
+  // ]);
 
   const handleAddItem = (e) => {
     e.preventDefault();
 
     const newCard = { id: Date.now(), text: e.target.children[0].value };
 
-    if (e.target.closest('ul').id === 'To-do') {
-      setTodoList([...todoList, newCard]);
-    }
-    if (e.target.closest('ul').id === 'In Progress') {
-      setProgressList([...progressList, newCard]);
-    }
-    if (e.target.closest('ul').id === 'Done') {
-      setDoneList([...doneList, newCard]);
+    switch (e.target.closest('ul').id) {
+      case 'To-do':
+        setTodoList([...todoList, newCard]);
+        break;
+
+      case 'In Progress':
+        setProgressList([...progressList, newCard]);
+        break;
+
+      case 'Done':
+        setDoneList([...doneList, newCard]);
+        break;
+
+      default:
+        break;
     }
 
     e.target.children[0].value = '';
   };
 
   const removeItem = () => {
-    console.log(dragged);
-    if (dragged.column === 'To-do') {
-      const filteredList = todoList.filter((card) => card.id !== dragged.id);
-      console.log(filteredList);
-      setTodoList(filteredList);
-    }
-    if (dragged.column === 'In Progress') {
-      const filteredList = progressList.filter((card) => card.id !== dragged.id);
-      console.log(filteredList);
-      setProgressList(filteredList);
-    }
+    switch (dragged.column) {
+      case 'To-do':
+        setTodoList(todoList.filter((card) => card.id !== dragged.id));
+        break;
 
-    if (dragged.column === 'Done') {
-      const filteredList = doneList.filter((card) => card.id !== dragged.id);
-      console.log(filteredList);
-      setDoneList(filteredList);
+      case 'In Progress':
+        setProgressList(progressList.filter((card) => card.id !== dragged.id));
+        break;
+
+      case 'Done':
+        setDoneList(doneList.filter((card) => card.id !== dragged.id));
+        break;
+
+      default:
+        break;
     }
   };
 
   const dropItem = (e) => {
     e.preventDefault();
-    if (e.target.closest('ul').id === 'To-do') {
-      removeItem();
-      setTodoList([...todoList, dragged]);
-    }
-    if (e.target.closest('ul').id === 'In Progress') {
-      removeItem();
-      setProgressList([...progressList, dragged]);
-    }
-    if (e.target.closest('ul').id === 'Done') {
-      removeItem();
-      setDoneList([...doneList, dragged]);
+    let parentNodes = e.target.closest('ul');
+
+    switch (true) {
+      case parentNodes.id === 'To-do' && dragged.column !== 'To-do':
+        setTodoList(() => [...todoList, dragged]);
+        removeItem(parentNodes.id);
+        break;
+
+      case parentNodes.id === 'In Progress' && dragged.column !== 'In Progress':
+        setProgressList(() => [...progressList, dragged]);
+        removeItem(parentNodes.id);
+        break;
+
+      case parentNodes.id === 'Done' && dragged.column !== 'Done':
+        setDoneList(() => [...doneList, dragged]);
+        removeItem(parentNodes.id);
+        break;
+
+      default:
+        break;
     }
   };
 
@@ -79,33 +105,18 @@ export default function Board() {
 
   return (
     <div className="flex justify-center content-center space-x-5 mx-10 my-4">
-      <Column
-        label="To-do"
-        todos={todoList}
-        addCard={handleAddItem}
-        onDragStart={handleDragStart}
-        onDrop={dropItem}
-        onDragEnter={onDragEnter}
-        onDragOver={onDragOver}
-      />
-      <Column
-        label="In Progress"
-        todos={progressList}
-        addCard={handleAddItem}
-        onDragStart={handleDragStart}
-        onDrop={dropItem}
-        onDragEnter={onDragEnter}
-        onDragOver={onDragOver}
-      />
-      <Column
-        label="Done"
-        todos={doneList}
-        onDragStart={handleDragStart}
-        addCard={handleAddItem}
-        onDrop={dropItem}
-        onDragEnter={onDragEnter}
-        onDragOver={onDragOver}
-      />
+      {columns.map((col, i) => (
+        <Column
+          key={i}
+          label={col.label}
+          todos={col.list}
+          addCard={handleAddItem}
+          onDragStart={handleDragStart}
+          onDrop={dropItem}
+          onDragEnter={onDragEnter}
+          onDragOver={onDragOver}
+        />
+      ))}
     </div>
   );
 }
