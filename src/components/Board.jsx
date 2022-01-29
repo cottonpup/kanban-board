@@ -11,12 +11,6 @@ export default function Board() {
     { label: 'In Progress', list: progressList },
     { label: 'Done', list: doneList },
   ];
-  // const [columns, setColumns] = useState([
-  // { label: 'To-do', list: todoList },
-  // { label: 'In Progress', list: progressList },
-  // { label: 'Done', list: doneList },
-  //   // { label: '', list: [] },
-  // ]);
 
   const handleAddItem = (e) => {
     e.preventDefault();
